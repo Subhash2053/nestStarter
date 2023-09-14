@@ -6,10 +6,16 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { UserType } from 'src/users/dto/response/user.response';
 import { LoginUserDTO } from './dto/input/login-user.dto';
 import { UserLoginResponse } from './dto/response/auth-response';
+import { CurrentUser } from './decorators/get-user.decorator';
+import { User } from 'src/schemas/user.schema';
+import { UsersService } from 'src/users/users.service';
 
 @Resolver()
 export class AuthResolver {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private usersService: UsersService,
+  ) {}
 
   //@UseGuards(LocalAuthGuard)
   @Mutation(() => UserLoginResponse)
@@ -19,7 +25,7 @@ export class AuthResolver {
 
   @UseGuards(JwtAuthGuard)
   @Query(() => UserType)
-  async getProfile(@Request() req) {
-    return req.user;
+  async getProfile(@Request() req, @CurrentUser() user: User) {
+    return await this.usersService.findOne(user.username);
   }
 }

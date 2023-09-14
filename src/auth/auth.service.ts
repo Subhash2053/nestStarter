@@ -24,7 +24,7 @@ export class AuthService {
 
   async login(loginUserDTO: LoginUserDTO): Promise<UserLoginResponse> {
     const { username, password } = loginUserDTO;
-    console.log({ username });
+
     const user = await this.validateUser(username, password);
     if (!user) {
       throw new BadRequestException('Wrong Credentials');
