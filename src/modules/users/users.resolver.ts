@@ -3,14 +3,17 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/input/create-user.dto';
 import { UserType } from './dto/response/user.response';
 import { UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { LocalAuthGuard } from 'src/auth/guards/local-auth.guard';
+import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
+import { Roles } from 'src/decorators/roles.decorator';
+import { Role } from 'src/enums/role.enum';
+import { RoleGuard } from 'src/guards/role.guard';
 
 @Resolver(() => UserType)
 export class UserResolver {
   constructor(private userService: UsersService) {}
 
-  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RoleGuard)
   @Query(() => [UserType])
   getUsers() {
     return this.userService.findAll();

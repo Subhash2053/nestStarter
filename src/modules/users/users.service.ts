@@ -13,7 +13,7 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const { firstName, lastName, username, password } = createUserDto;
+    const { firstName, lastName, username, password, role } = createUserDto;
     const user = await this.userModel.findOne({ username: username });
 
     if (user) {
@@ -24,6 +24,7 @@ export class UsersService {
       lastName,
       username,
       password: await this.hashService.hashPassword(password),
+      role,
     });
     return createdUser.save();
   }

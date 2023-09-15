@@ -1,11 +1,13 @@
 import { Field, InputType } from '@nestjs/graphql';
 import {
+  IsEnum,
   IsNotEmpty,
   IsString,
   Matches,
   MaxLength,
   MinLength,
 } from 'class-validator';
+import { Role } from 'src/enums/role.enum';
 
 @InputType()
 export class CreateUserDto {
@@ -33,4 +35,10 @@ export class CreateUserDto {
   @Field()
   @IsString()
   lastName: string;
+
+  @IsString()
+  @Field()
+  @IsNotEmpty()
+  @IsEnum(Role)
+  role: string;
 }

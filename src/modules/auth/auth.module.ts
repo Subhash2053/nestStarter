@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { HashService } from 'src/users/hash.service';
-import { UsersService } from 'src/users/users.service';
-import { UsersModule } from 'src/users/users.module';
+import { HashService } from 'src/modules/users/hash.service';
+import { UsersService } from 'src/modules/users/users.service';
+import { UsersModule } from 'src/modules/users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from 'src/schemas/user.schema';
-import { LocalStrategy } from './strategies/local.strategy';
+import { LocalStrategy } from '../../strategies/local.strategy';
 import { JwtModule } from '@nestjs/jwt';
-import { JwtStrategy } from './strategies/jwt.strategy';
+import { JwtStrategy } from '../../strategies/jwt.strategy';
 import { AuthResolver } from './auth.resolver';
 
 @Module({
