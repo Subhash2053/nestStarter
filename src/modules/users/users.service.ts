@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from 'src/schemas/user.schema';
-import { CreateUserDto } from './dto/input/create-user.dto';
+import { CreateUserDto } from '../auth/dto/input/create-user.dto';
 import { HashService } from './hash.service';
 
 @Injectable()
@@ -33,7 +33,19 @@ export class UsersService {
     return await this.userModel.find();
   }
 
-  async findOne(username: string): Promise<User | undefined> {
-    return await this.userModel.findOne({ username: username });
+  async findOne(condition, projection = null) {
+    if (projection) {
+      return this.userModel.findOne(condition, projection);
+    } else {
+      return this.userModel.findOne(condition);
+    }
+  }
+
+  async findById(id: string, projection = {}) {
+    return this.userModel.findById(id, projection);
+  }
+
+  async updateById(id: string, data, options = {}) {
+    return this.userModel.findByIdAndUpdate(id, data, options);
   }
 }

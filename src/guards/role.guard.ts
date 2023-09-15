@@ -33,9 +33,11 @@ export class RoleGuard implements CanActivate {
 
     const ctx = GqlExecutionContext.create(context);
     const { user } = ctx.getContext().req;
-    const userInfo = await this.userService.findOne(user.username);
+    const userInfo = await this.userService.findOne({
+      username: user.username,
+    });
 
-    for (let role of requiredRoles) {
+    for (const role of requiredRoles) {
       const result = this.accessControlService.isAuthorized({
         requiredRole: role,
         currentRole: userInfo.role,

@@ -3,7 +3,7 @@ import { Role } from 'src/enums/role.enum';
 
 interface IsAuthorizedParams {
   currentRole: Role | string;
-  requiredRole: Role | string;
+  requiredRole: Role;
 }
 
 @Injectable()
@@ -31,7 +31,7 @@ export class AccessContorlService {
   }
 
   public isAuthorized({ currentRole, requiredRole }: IsAuthorizedParams) {
-    for (let hierarchy of this.hierarchies) {
+    for (const hierarchy of this.hierarchies) {
       const priority = hierarchy.get(currentRole);
       const requiredPriority = hierarchy.get(requiredRole);
       if (priority && requiredPriority && priority >= requiredPriority) {

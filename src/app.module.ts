@@ -8,7 +8,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ConfigModule } from '@nestjs/config';
 import { configValidationSchema } from './config.schema';
-import { SocialsModule } from './modules/socials/socials.module';
+import { FacebookStrategy } from './strategies/facebook.strategy';
 
 @Module({
   imports: [
@@ -23,9 +23,8 @@ import { SocialsModule } from './modules/socials/socials.module';
       playground: true,
       autoSchemaFile: true,
     }),
-    SocialsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, FacebookStrategy],
 })
 export class AppModule {}

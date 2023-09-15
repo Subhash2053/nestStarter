@@ -1,8 +1,13 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType, OmitType } from '@nestjs/graphql';
 import { UserType } from 'src/modules/users/dto/response/user.response';
 
 @ObjectType()
-export class UserLoginResponse {
+class AuthResponse {
+  @Field({ nullable: true })
+  message?: string;
+}
+@ObjectType()
+export class UserLoginResponse extends AuthResponse {
   @Field(() => UserType)
   user: UserType;
 
@@ -14,7 +19,12 @@ export class UserLoginResponse {
 }
 
 @ObjectType()
-export class ChangePasswordResponse {
+export class ChangePasswordResponse extends AuthResponse {
   @Field()
   status: boolean;
 }
+
+@ObjectType()
+export class RefreshTokenResponse extends OmitType(UserLoginResponse, [
+  'user',
+] as const) {}

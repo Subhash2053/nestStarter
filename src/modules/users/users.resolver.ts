@@ -1,6 +1,5 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Query, Resolver } from '@nestjs/graphql';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/input/create-user.dto';
 import { UserType } from './dto/response/user.response';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
@@ -17,10 +16,5 @@ export class UserResolver {
   @Query(() => [UserType])
   getUsers() {
     return this.userService.findAll();
-  }
-
-  @Mutation(() => UserType)
-  createUser(@Args('createUserDto') createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
   }
 }
