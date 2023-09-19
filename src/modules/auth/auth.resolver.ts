@@ -12,7 +12,7 @@ import {
 import { CurrentUser } from '../../decorators/get-user.decorator';
 
 import { UsersService } from 'src/modules/users/users.service';
-import { FacebookLoginInput } from './dto/input/facebook-login.input';
+import { GoogleLoginInput } from './dto/input/google-login.input';
 import { CreateUserDto } from './dto/input/create-user.dto';
 import { ChangePasswordDto } from './dto/input/change-password.dto';
 import { JwtUserResponse } from './dto/response/jwt-user-reponse';
@@ -31,10 +31,10 @@ export class AuthResolver {
   }
 
   @Mutation(() => UserLoginResponse)
-  async loginWithFacebook(
-    @Args('body') facebookLoginInput: FacebookLoginInput,
+  async loginWithGoogle(
+    @Args('googleLoginInput') googleLoginInput: GoogleLoginInput,
   ) {
-    return await this.authService.loginWithFacebook(facebookLoginInput);
+    return await this.authService.loginWithGoogle(googleLoginInput);
   }
 
   @Mutation(() => UserType)
@@ -64,7 +64,7 @@ export class AuthResolver {
 
   @Mutation(() => RefreshTokenResponse)
   async refreshToken(@Args('refreshToken') refreshToken: string) {
-    const status = await this.authService.refreshToken(refreshToken);
-    return { message: 'Token refreshed successfully', ...status };
+    const data = await this.authService.refreshToken(refreshToken);
+    return { message: 'Token refreshed successfully', ...data };
   }
 }

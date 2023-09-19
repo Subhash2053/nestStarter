@@ -9,19 +9,25 @@ import { HashService } from 'src/modules/users/hash.service';
 import { UsersService } from 'src/modules/users/users.service';
 import { LoginUserDTO } from './dto/input/login-user.dto';
 import { UserLoginResponse } from './dto/response/auth-response';
-import { FacebookLoginInput } from './dto/input/facebook-login.input';
+import { GoogleLoginInput } from './dto/input/google-login.input';
 import { ChangePasswordDto } from './dto/input/change-password.dto';
 import { ConfigService } from '@nestjs/config';
 import { TokenExpiredError } from 'jsonwebtoken';
+import { Auth, google } from 'googleapis';
 
 @Injectable()
 export class AuthService {
+  private oauthClient: Auth.OAuth2Client;
   constructor(
     private usersService: UsersService,
     private hashService: HashService,
     private jwtService: JwtService,
     private configService: ConfigService,
-  ) {}
+  ) {
+    const clientId = configService.get('GOOGLE_CLIENT_ID');
+    const clientSecret = configService.get('GOOGLE_CLIENT_SECRET');
+    this.oauthClient = new google.auth.OAuth2(clientId, clientSecret);
+  }
 
   async validateUser(username: string, pass: string): Promise<any> {
     const user = await this.usersService.findOne({
@@ -52,8 +58,25 @@ export class AuthService {
     };
   }
 
-  async loginWithFacebook(facebookLoginInput: FacebookLoginInput) {
-    return facebookLoginInput;
+  async loginWithGoogle(
+    googleLoginInput: GoogleLoginInput,
+  ): Promise<UserLoginResponse> {
+    const { token } = googleLoginInput;
+    const tokenInfo = await this.oauthClient.getTokenInfo(token);
+    console.log({ tokenInfo });
+    const user = await this.usersService.findOne({ email: tokenInfo.email });
+    if (user) {
+      const payload = { username: user.username, sub: user.id };
+      return {
+        user: user,
+        accessToken: await this.jwtService.sign(payload),
+        refreshToken: await this.jwtService.sign(payload, {
+          expiresIn: '2d',
+          secret: this.configService.get('REFRESH_TOKEN_SECRET'),
+        }),
+      };
+    }
+    return undefined;
   }
 
   async changePassword(changePasswordDto: ChangePasswordDto, userId: string) {
